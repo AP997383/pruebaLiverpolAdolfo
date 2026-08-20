@@ -5,12 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-
+import androidx.navigation.navArgument
+import com.example.mobiletechnicaltest.ui.pdp.ProductDetailScreen
 import com.example.mobiletechnicaltest.ui.pdp.ProductDetailViewModel
+import com.example.mobiletechnicaltest.ui.plp.ProductListScreen
 import com.example.mobiletechnicaltest.ui.plp.ProductListViewModel
-import com.example.mobiletechnicaltest.ui.plp.productListScreen
+
 
 @Composable
 fun NavHostPrueba(
@@ -25,17 +28,19 @@ fun NavHostPrueba(
         modifier = Modifier.fillMaxWidth()
         ){
         composable(Routes.ScreenList.route){
-            productListScreen(productListViewModel,{
+            ProductListScreen(productListViewModel,{
                 navController.navigate(Routes.ScreenDetail.route +"/$it")
             })
         }
-        composable(Routes.ScreenDetail.route+"{params}",
+        composable(Routes.ScreenDetail.route+"/{params}",
             arguments = listOf(
-
-            )){
-            productListScreen(productListViewModel,{
-                navController.navigate(Routes.ScreenDetail.route +"/$it")
-            })
+                navArgument("params") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )){ params->
+            val id = params.arguments?.getString("params") ?: ""
+            ProductDetailScreen(productDetailViewModel,id,{navController.popBackStack()},{})
         }
     }
 }

@@ -1,38 +1,56 @@
 package com.example.mobiletechnicaltest.ui.main
-
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.core.app.ComponentActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
-import com.example.mobiletechnicaltest.databinding.ActivityMainBinding
 import com.example.mobiletechnicaltest.ui.components.NavHostPrueba
 import com.example.mobiletechnicaltest.ui.components.Routes
 import com.example.mobiletechnicaltest.ui.pdp.ProductDetailViewModel
 import com.example.mobiletechnicaltest.ui.plp.ProductListViewModel
+import com.example.mobiletechnicaltest.ui.theme.LiverPoolTheme
 import dagger.hilt.android.AndroidEntryPoint
-
 @AndroidEntryPoint
-class MainActivity : androidx.activity.ComponentActivity() {
-
-
+class MainActivity : ComponentActivity() {
+    @SuppressLint("CoroutineCreationDuringComposition")
+    @RequiresApi(Build.VERSION_CODES.O)
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController = rememberNavController()
-            val productListViewModel: ProductListViewModel by viewModels()
-            val productDetailViewModel: ProductDetailViewModel by viewModels()
-            Scaffold(){innerPadding->
-                NavHostPrueba(
-                    navController = navController,
-                    startDestination = Routes.ScreenList.route,
-                    productListViewModel =productListViewModel,
-                    productDetailViewModel =productDetailViewModel
-                )
+            LiverPoolTheme (
+                darkTheme = false,
+                dynamicColor = false) {
+                val navController = rememberNavController()
+                var startDestination by remember { mutableStateOf<String?>(null) }
+                val productsList: ProductListViewModel by viewModels()
+                val productsDetail: ProductDetailViewModel by viewModels()
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()) { innerPadding ->
+                    NavHostPrueba(
+                        navController = navController,
+                        startDestination = Routes.ScreenList.route,
+                        productsList,
+                        productsDetail
+                    )
+                }
             }
         }
     }

@@ -40,7 +40,7 @@ fun ProductListScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedSortOption by remember { mutableStateOf(0) }
     var tempSortOption by remember { mutableStateOf(0) }
-
+    val isLoading by productListViewModel.isLoading.collectAsState()
     LaunchedEffect(Unit) {
         productListViewModel.getProducts()
     }
@@ -110,87 +110,100 @@ fun ProductListScreen(
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
+        Box(){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp)
             ) {
-                items(filteredProducts) { product ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { openDetailProduct(product.id) },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F8F8)),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                    ) {
-                        Column(
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(filteredProducts) { product ->
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
+                                .clickable { openDetailProduct(product.id) },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F8F8)),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
-                            AsyncImage(
-                                model = product.imageUrl,
-                                contentDescription = stringResource(R.string.content_desc_product_image),
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(140.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(Color.LightGray),
-                                contentScale = ContentScale.Crop
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = product.category,
-                                fontSize = 12.sp,
-                                color = Color.Gray,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                text = product.title,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 2,
-                                color = Color.Black
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
+                                    .padding(8.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = Color(0xFFFFC107),
-                                    modifier = Modifier.size(14.dp)
+                                AsyncImage(
+                                    model = product.imageUrl,
+                                    contentDescription = stringResource(R.string.content_desc_product_image),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(140.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.LightGray),
+                                    contentScale = ContentScale.Crop
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+
+                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "${product.rating} (${product.ratingCount})",
+                                    text = product.category,
                                     fontSize = 12.sp,
-                                    color = Color.DarkGray
+                                    color = Color.Gray,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    text = product.title,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 2,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = Color(0xFFFFC107),
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "${product.rating} (${product.ratingCount})",
+                                        fontSize = 12.sp,
+                                        color = Color.DarkGray
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "$${product.price}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Red
                                 )
                             }
-
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = "$${product.price}",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Red
-                            )
                         }
                     }
                 }
             }
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White.copy(alpha = 0.7f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFF8E24AA))
+                }
+            }
         }
+
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },

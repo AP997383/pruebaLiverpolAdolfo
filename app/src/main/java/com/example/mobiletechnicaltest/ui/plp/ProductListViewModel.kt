@@ -25,7 +25,9 @@ class ProductListViewModel  @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading
 
     fun getProducts() = viewModelScope.launch {
+        _isLoading.value =true
          useCase.getAllProducts().collect {
+             _isLoading.value=false
              _products.value = it
          }
     }

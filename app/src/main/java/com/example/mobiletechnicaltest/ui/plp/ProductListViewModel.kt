@@ -8,6 +8,10 @@ class ProductListViewModel : ViewModel() {
 
     private val repository = ProductRepository(ApiClient.api)
 
+    fun getAllProducts(){
+
+    }
+
     // TODO Candidate:
     // - Expose UI state to the Fragment (e.g. StateFlow<ProductListUiState>)
     // - Load the products from the repository (viewModelScope + coroutines)

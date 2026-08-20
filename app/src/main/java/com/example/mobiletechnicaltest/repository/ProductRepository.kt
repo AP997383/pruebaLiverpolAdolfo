@@ -14,12 +14,13 @@ class ProductRepository(
 ) {
 
     suspend fun getProducts(): List<Product> {
+        api.getProduct()
         // TODO Candidate implementation
         return emptyList()
     }
 
     suspend fun getProduct(id: Int): Product? {
-        // TODO Candidate implementation
+          api.getProduct(id)
         return null
     }
 }

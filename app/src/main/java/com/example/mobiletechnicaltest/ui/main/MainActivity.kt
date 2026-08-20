@@ -1,16 +1,39 @@
 package com.example.mobiletechnicaltest.ui.main
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Scaffold
+import androidx.core.app.ComponentActivity
+import androidx.navigation.compose.rememberNavController
 import com.example.mobiletechnicaltest.databinding.ActivityMainBinding
+import com.example.mobiletechnicaltest.ui.components.NavHostPrueba
+import com.example.mobiletechnicaltest.ui.components.Routes
+import com.example.mobiletechnicaltest.ui.pdp.ProductDetailViewModel
+import com.example.mobiletechnicaltest.ui.plp.ProductListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class MainActivity : androidx.activity.ComponentActivity() {
 
-    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        enableEdgeToEdge()
+        setContent {
+            val navController = rememberNavController()
+            val productListViewModel: ProductListViewModel by viewModels()
+            val productDetailViewModel: ProductDetailViewModel by viewModels()
+            Scaffold(){innerPadding->
+                NavHostPrueba(
+                    navController = navController,
+                    startDestination = Routes.ScreenList.route,
+                    productListViewModel =productListViewModel,
+                    productDetailViewModel =productDetailViewModel
+                )
+            }
+        }
     }
 }
